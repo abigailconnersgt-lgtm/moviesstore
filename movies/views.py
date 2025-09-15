@@ -25,6 +25,18 @@ def show(request, id):
     return render(request, 'movies/show.html', {'template_data' : template_data})
 
 @login_required
+def toggle_review_like(request, review_id):
+    review = get_object_or_404(Review, id=review_id)
+
+    if review.likes.filter(id=request.user.id).exists():
+        review.likes.remove(request.user)
+    else:
+        review.likes.add(request.user)
+
+    # Redirect back to the movie detail page
+    return redirect("movies.show", id=review.movie.id)
+
+@login_required
 def create_review(request, id):
     if request.method == 'POST' and request.POST['comment'] !='':
         movie = Movie.objects.get(id=id)

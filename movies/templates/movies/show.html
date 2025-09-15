@@ -47,6 +47,13 @@
                         <a class="btn btn-danger"
                             href=" {% url 'movies.delete_review' id=template_data.movie.id review_id=review.id%}">Delete</a>
                         {% endif %}
+                        <a href="{% url 'toggle_review_like' review.id %}" class="btn btn-outline-primary">
+                                {% if user in review.likes.all %}
+                                    ❤️ Unlike ({{ review.total_likes }})
+                                {% else %}
+                                    👍 Like ({{ review.total_likes }})
+                                {% endif %}
+                        </a>
                     </li>
                     {% endfor %}
                 </ul>
