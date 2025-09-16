@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Movie, Review
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count
 # Create your views here.
 
 def index(request):
@@ -24,8 +25,17 @@ def show(request, id):
     template_data['reviews'] = reviews
     return render(request, 'movies/show.html', {'template_data' : template_data})
 
+def top_comments(request):
+    template_data = {}
+    template_data['title'] = 'Top Comments'
+    reviews = Review.objects.all().annotate(like_count = Count('likes')).order_by('-like_count', '-date')
+    template_data['reviews'] = reviews
+    return render(request, 'movies/top_comments.html', {'template_data' : template_data})
+
 @login_required
 def toggle_review_like(request, review_id):
+    template_data = {}
+    template_data['title'] = 'Top Comments'
     review = get_object_or_404(Review, id=review_id)
 
     if review.likes.filter(id=request.user.id).exists():
